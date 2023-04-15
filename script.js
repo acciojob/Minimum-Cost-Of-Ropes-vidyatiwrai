@@ -35,4 +35,4 @@ function calculateMinCost(arr,n) {
  // calculateMinCost(arr,n) ;
   
   
-}  
+ 
