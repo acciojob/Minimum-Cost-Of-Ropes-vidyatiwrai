@@ -32,7 +32,7 @@ function calculateMinCost(arr,n) {
    
        console.log(res);
 }
- calculateMinCost(arr,n) ;
+ // calculateMinCost(arr,n) ;
   
   
 }  
