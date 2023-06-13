@@ -1,38 +1,124 @@
-function calculateMinCost(arr,n) {
-  //your code here
-  // let arr = [4, 3, 2, 6];
-// let n = arr.length;
+class MinHeap {
+  constructor() {
+    this.heap = [];
+  }
 
-    // Create a priority queue
-        let pq = [];
-   
-        // Adding items to the pQueue
-        for (let i = 0; i < n; i++) {
-            pq.push(arr[i]);
-        }   
-           
-        pq.sort(function(a,b){return a-b;});
-         
-        // Initialize result
-        let res = 0;
-   
-        // While size of priority queue
-        // is more than 1
-        while (pq.length > 1) {
-            // Extract shortest two ropes from pq
-            let first = pq.shift();
-            let second = pq.shift();
-   
-            // Connect the ropes: update result
-            // and insert the new rope to pq
-            res += first + second;
-            pq.push(first + second);
-            pq.sort(function(a,b){return a-b;});
-        }
-   
-       console.log(res);
+  getLeftChildIndex(parentIndex) {
+    return 2 * parentIndex + 1;
+  }
+
+  getRightChildIndex(parentIndex) {
+    return 2 * parentIndex + 2;
+  }
+
+  getParentIndex(childIndex) {
+    return Math.floor((childIndex - 1) / 2);
+  }
+
+  hasLeftChild(index) {
+    return this.getLeftChildIndex(index) < this.heap.length;
+  }
+
+  hasRightChild(index) {
+    return this.getRightChildIndex(index) < this.heap.length;
+  }
+
+  hasParent(index) {
+    return this.getParentIndex(index) >= 0;
+  }
+
+  leftChild(index) {
+    return this.heap[this.getLeftChildIndex(index)];
+  }
+
+  rightChild(index) {
+    return this.heap[this.getRightChildIndex(index)];
+  }
+
+  parent(index) {
+    return this.heap[this.getParentIndex(index)];
+  }
+
+  swap(index1, index2) {
+    const temp = this.heap[index1];
+    this.heap[index1] = this.heap[index2];
+    this.heap[index2] = temp;
+  }
+
+  peek() {
+    if (this.heap.length === 0) {
+      throw new Error('Heap is empty');
+    }
+
+    return this.heap[0];
+  }
+
+  poll() {
+    if (this.heap.length === 0) {
+      throw new Error('Heap is empty');
+    }
+
+    const item = this.heap[0];
+    this.heap[0] = this.heap[this.heap.length - 1];
+    this.heap.pop();
+    this.heapifyDown();
+    return item;
+  }
+
+  add(item) {
+    this.heap.push(item);
+    this.heapifyUp();
+  }
+
+  heapifyUp() {
+    let index = this.heap.length - 1;
+    while (this.hasParent(index) && this.parent(index) > this.heap[index]) {
+      const parentIndex = this.getParentIndex(index);
+      this.swap(parentIndex, index);
+      index = parentIndex;
+    }
+  }
+
+  heapifyDown() {
+    let index = 0;
+    while (this.hasLeftChild(index)) {
+      let smallerChildIndex = this.getLeftChildIndex(index);
+      if (
+        this.hasRightChild(index) &&
+        this.rightChild(index) < this.leftChild(index)
+      ) {
+        smallerChildIndex = this.getRightChildIndex(index);
+      }
+
+      if (this.heap[index] < this.heap[smallerChildIndex]) {
+        break;
+      } else {
+        this.swap(index, smallerChildIndex);
+      }
+
+      index = smallerChildIndex;
+    }
+  }
 }
- // calculateMinCost(arr,n) ;
-  
-  
- 
+
+function findMinimumCost(arr) {
+  const minHeap = new MinHeap();
+
+  for (let i = 0; i < arr.length; i++) {
+    minHeap.add(arr[i]);
+  }
+
+  let cost = 0;
+
+  while (minHeap.heap.length > 1) {
+    const min1 = minHeap.poll();
+    const min2 = minHeap.poll();
+    const currentCost = min1 + min2;
+    cost += currentCost;
+    minHeap.add(currentCost);
+  }
+
+  return cost;
+}
+
+console.log(findMinimumCost(arr)); // Output: 62
